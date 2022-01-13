@@ -64,6 +64,22 @@
         state: started
         enabled: yes
       when: ansible_distribution == "CentOS"
+
+    - name: change e-mail for admin
+      tags: centos,apache,httpd
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin someone@somewhere.net
+      when: ansible_distribution == "CentOS"
+      register: httpd_var
+
+    - name: restart httpd after conf file edit (CentOS)
+      tags: httpd,apache,centos
+      service:
+        name: httpd
+        state: restarted
+      when: httpd_var.changed
     
     - name: copy default web page
       tags: apache,apache2,httpd
