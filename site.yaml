@@ -4,12 +4,14 @@
   tasks:
 
     - name: install updates (Ubuntu)
+      tags: always
       apt:
         upgrade: dist
         update_cache: yes
       when: ansible_distribution == "Ubuntu"
 
     - name: install updates (centos)
+      tags: always
       yum:
         update_only: yes
         update_cache: yes
@@ -20,6 +22,7 @@
   tasks:
 
     - name: install apache and php (ubuntu)
+      tags: apache,apache2,ubuntu,php
       apt:
         name:
           - apache2
@@ -28,6 +31,7 @@
       when: ansible_distribution == "Ubuntu"
 
     - name: install apache and php (centos)
+      tags: apache,apache2,centos,php
       yum:
         name:
           - httpd
@@ -40,6 +44,7 @@
   tasks:
 
     - name: install mariadb (ubuntu)
+      tags: db,database,ubuntu
       apt:
         name:
           - mariadb-server
@@ -47,6 +52,7 @@
       when: ansible_distribution == "Ubuntu"
 
     - name: install mariadb (centos)
+      tags: db,database,ubuntu
       yum:
         name:
           - mariadb
