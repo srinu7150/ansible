@@ -17,6 +17,24 @@
         update_cache: yes
       when: ansible_distribution == "CentOS"
 
+- hosts: workstations
+  become: yes
+  tasks:
+
+    - name: install unzip
+      package:
+        name: unzip
+        state: latest
+
+    - name: install teraform on workstations
+      unarchive:
+        src: https://releases.hashicorp.com/terraform/1.1.3/terraform_1.1.3_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: 0755
+        owner: root
+        group: root
+
 - hosts: web_servers
   become: yes
   tasks:
@@ -39,6 +57,14 @@
         state: latest
       when: ansible_distribution == "CentOS"
 
+    - name: start httpd service
+      tags: apache,httpd,centos
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+    
     - name: copy default web page
       tags: apache,apache2,httpd
       copy:
