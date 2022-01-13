@@ -2,21 +2,11 @@
 - hosts: all
   become: yes
   tasks:
-    - name: update repo cache
-      apt:
-        update_cache: yes
-      when: ansible_distribution == "Ubuntu"
-    - name: install apache2
-      apt:
-        name: apache2
+    - name: install apache2 and php
+      package:
+        name: 
+          - "{{ apache_package  }}"
+          - "{{ php_package  }}"
         state: latest
-      when: ansible_distribution == "Ubuntu"
-    - name: update repo cache
-      yum:
         update_cache: yes
-      when: ansible_distribution == "CentOS"
-    - name: install httpd
-      yum:
-        name: httpd
-        state: latest
-      when: ansible_distribution == "CentOS"
+
