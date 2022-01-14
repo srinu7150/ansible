@@ -1,0 +1,50 @@
+- name: install apache and php (ubuntu)
+  tags: apache,apache2,ubuntu,php
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: install apache and php (centos)
+  tags: apache,apache2,centos,php
+  yum:
+    name:
+      - httpd
+      - php
+    state: latest
+  when: ansible_distribution == "CentOS"
+
+- name: start httpd service
+  tags: apache,httpd,centos
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+
+- name: change e-mail for admin
+  tags: centos,apache,httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: "^ServerAdmin"
+    line: ServerAdmin someone@somewhere.net
+  when: ansible_distribution == "CentOS"
+  register: httpd_var
+
+- name: restart httpd after conf file edit (CentOS)
+  tags: httpd,apache,centos
+  service:
+    name: httpd
+    state: restarted
+  when: httpd_var.changed
+
+- name: copy default web page
+  tags: apache,apache2,httpd
+  copy:
+    src: /home/ansible/ansible/files/default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0664
