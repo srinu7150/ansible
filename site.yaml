@@ -18,98 +18,20 @@
 
 - hosts: all
   become: yes
-  tasks:
-    - name: add ssh public key to simone
-      authorized_key:
-        user: simone
-        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCkBZ0FKQNRJrHNLNfwDSqFK19ifPqWQL1orrTawaYNJceep5iEKEd9ELoHFw8Ns5U3TbXJTaDna68XHhKt1F98femmkce7NlPXjrIOVk0kJDzOXvpmnSEZH2k2qwl1F4GyoRM4k4jBDZY3Nfg7bXF1hLr6hR6MO+0HCepI57gFLPz1KgkVkG0l4jbpJjQUkeAn+mnKo64KCFKNGB/LKE0YP856ltuVkLkS/UfPChozm88MQephqNUBqm0R0UnTI4Bs6PHyJSjciH1fqX+HFe/1sToUi54mZnVukDAwrWf3jqUnbI2+T+RL57GzH6Ncrlr+52kVI6Quj17qL7puWWLUG9um1yq2GndN2u8E3ILjn75kc6PhXsnh4B3nvb24j86elylN2EgJB1YQUSMUQU+kBYRu8mG84Pb1aL3tj+N1jXsi9EupTFBkw0CZxafTjEsfTELDVCoM4lJXUNKiAJ+2wIYQwkUGFbQtLzMdBcgoLEPyZMkXgtwckkwvvTdEBX8= ansible@ansiblecontroller"
+  roles:
+    - base
 
 - hosts: workstations
   become: yes
-  tasks:
-    - name: install unzip
-      package:
-        name: unzip
-        state: latest
-
-    - name: install teraform on workstations
-      unarchive:
-        src: https://releases.hashicorp.com/terraform/1.1.3/terraform_1.1.3_linux_amd64.zip
-        dest: /usr/local/bin
-        remote_src: yes
-        mode: 0755
-        owner: root
-        group: root
+  roles:
+    - workstations
 
 - hosts: web_servers
   become: yes
-  tasks:
-    - name: install apache and php (ubuntu)
-      tags: apache,apache2,ubuntu,php
-      apt:
-        name:
-          - apache2
-          - libapache2-mod-php
-        state: latest
-      when: ansible_distribution == "Ubuntu"
-
-    - name: install apache and php (centos)
-      tags: apache,apache2,centos,php
-      yum:
-        name:
-          - httpd
-          - php
-        state: latest
-      when: ansible_distribution == "CentOS"
-
-    - name: start httpd service
-      tags: apache,httpd,centos
-      service:
-        name: httpd
-        state: started
-        enabled: yes
-      when: ansible_distribution == "CentOS"
-
-    - name: change e-mail for admin
-      tags: centos,apache,httpd
-      lineinfile:
-        path: /etc/httpd/conf/httpd.conf
-        regexp: "^ServerAdmin"
-        line: ServerAdmin someone@somewhere.net
-      when: ansible_distribution == "CentOS"
-      register: httpd_var
-
-    - name: restart httpd after conf file edit (CentOS)
-      tags: httpd,apache,centos
-      service:
-        name: httpd
-        state: restarted
-      when: httpd_var.changed
-
-    - name: copy default web page
-      tags: apache,apache2,httpd
-      copy:
-        src: /home/ansible/ansible/files/default_site.html
-        dest: /var/www/html/index.html
-        owner: root
-        group: root
-        mode: 0664
+  roles:
+    - web_servers
 
 - hosts: db_servers
   become: yes
-  tasks:
-    - name: install mariadb (ubuntu)
-      tags: db,database,ubuntu
-      apt:
-        name:
-          - mariadb-server
-        state: latest
-      when: ansible_distribution == "Ubuntu"
-
-    - name: install mariadb (centos)
-      tags: db,database,ubuntu
-      yum:
-        name:
-          - mariadb
-        state: latest
-      when: ansible_distribution == "CentOS"
+  roles:
+    - db_servers
