@@ -1,13 +1,13 @@
-target1 ansible_host=192.168.1.14
-target2 ansible_host=192.168.1.15
-target3 ansible_host=192.168.1.6
-target4 ansible_host=192.168.1.8
+ubuntu1 ansible_host=192.168.1.14
+ubuntu2 ansible_host=192.168.1.15
+centos1 ansible_host=192.168.1.6
+ubuntu3 ansible_host=192.168.1.8
 [web_servers]
-target1
-target3
+ubuntu1
+centos1
 
 [db_servers]
-target2
+ubuntu2
 
 [workstations]
-target4
+ubuntu3
