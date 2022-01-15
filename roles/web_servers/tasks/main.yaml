@@ -25,7 +25,7 @@
 - name: copy default web page
   tags: apache,apache2,httpd
   copy:
-    src: /home/ansible/ansible/files/default_site.html
+    src: default_site.html
     dest: /var/www/html/index.html
     owner: root
     group: root
